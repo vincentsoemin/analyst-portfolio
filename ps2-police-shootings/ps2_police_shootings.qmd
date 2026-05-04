@@ -1,0 +1,300 @@
+---
+title: "Problem Set 2"
+author: "Vincent"
+date: "Feb 18, 2026"
+format: html
+code-overflow: wrap
+knitr:
+  opts_chunk:
+    echo: true
+    eval: true
+    collapse: true
+    message: false
+    warning: false
+---
+
+## Set Up
+
+```{r}
+library(haven) # to read dta file
+library(tidyverse)
+library(patchwork)
+
+# Read the data from the csv and dta files
+
+df <- read_dta('la_turnout_basic.dta')
+slv <- read_csv('silver_bulletin.csv')
+fatal <- read_csv('fatal-police-shootings-data.csv')
+```
+
+## Plot #1 Replication
+
+```{r}
+df <- df |> 
+  mutate(
+    understandingclause = if_else(understandingclause2 == 0, 'Control', 'Treated'),
+    .after = 'understandingclause2'
+  )
+
+# separate theme
+mytheme <-
+  theme(
+    legend.title = element_blank(),
+    axis.title = element_text(size = 9),
+    axis.text = element_text(size = 9),
+    plot.caption = element_text(
+      size = 10,
+      hjust = 0.5
+    )
+  )
+
+# Black registration trend
+b_trend <- df |> 
+  filter(!is.na(understandingclause)) |> 
+  group_by(year, understandingclause) |> 
+  summarize(
+    avgblackrate = mean(blackregrate, na.rm = TRUE)
+  ) |> 
+  ggplot(aes(x = year, y = avgblackrate, shape = understandingclause)) +
+  geom_line(aes(color = understandingclause)) +
+  geom_point() +
+  theme_bw(base_size = 12)
+
+# Black Registration plot
+b_plot <- b_trend +
+  scale_x_continuous(
+    limits = c(1950, 1970),
+    breaks = seq(1950, 1970, 5)
+  ) +
+  scale_y_continuous(
+    limits = c(0.0, 0.65),
+    breaks = seq(0.0, 0.6, 0.2),
+    expand = expansion(mult = c(0, 0)),
+    labels = c('', '0.2', '0.4', '0.6')
+  ) +
+  scale_color_manual(
+    values = c('#673074','#fdee6e')
+  ) +
+  labs(
+    y = 'Black Registration Rate',
+    caption = '(a) Black Registration'
+  ) +
+  mytheme
+
+# White registration trend
+w_trend <- df |> 
+  filter(!is.na(understandingclause)) |> 
+  group_by(year, understandingclause) |> 
+  summarize(
+    avgwhiterate = mean(whiteregrate, na.rm = TRUE)
+  ) |> 
+  ggplot(aes(x = year, y = avgwhiterate, shape = understandingclause)) +
+  geom_line(aes(color = understandingclause)) +
+  geom_point() +
+  theme_bw(base_size = 12)
+
+# White registration plot
+w_plot <- w_trend +
+  scale_x_continuous(
+    limits = c(1950, 1970),
+    breaks = seq(1950, 1970, 5)
+  ) +
+  scale_y_continuous(
+    limits = c(0.55, 1.0),
+    breaks = seq(0.6, 1.0, .1),
+    expand = expansion(mult = c(0, .05))
+  ) +
+  labs(
+    y = 'White Registration Rate',
+    caption = '(b) White Registration'
+  ) +
+  scale_color_manual(
+    values = c('#673074','#fdee6e')
+  ) +
+  mytheme
+
+# Two plots are pasted together
+# Added plot_layout as 'collect' to make the plot cleaner and larger
+b_plot + w_plot + plot_layout(guides = 'collect') + plot_annotation(
+  title = 'FIGURE 2. Proportion of Registered Voters by Race and by Understanding\nClause Status. Treated Parishes Enforced the Understanding Clause and\nControl Parishes Did Not',
+  theme = theme(plot.title = element_text(face = 'bold'))
+)
+```
+
+## Plot #2 Replication
+
+```{r}
+# Adjust date format
+slv <- slv |> 
+  mutate(modeldate = as.Date(modeldate, format = "%m/%d/%Y"))
+
+# Get latest date
+latest <- slv |> 
+  filter(modeldate == max(modeldate))
+
+# Plot
+ggplot(slv, aes(x = modeldate)) +
+  geom_ribbon(aes(ymin = approve_lo, ymax = approve_hi), 
+              fill = "#16877a", alpha = 0.2) +
+  geom_line(aes(y = approve), color = "#16877a", linewidth = 1) +
+  geom_ribbon(aes(ymin = disapprove_lo, ymax = disapprove_hi), 
+              fill = "#d96003", alpha = 0.2) +
+  geom_line(aes(y = disapprove), color = "#d96003", linewidth = 1) +
+  
+  # Add labels at the end
+  geom_text(data = latest, 
+            aes(x = modeldate, y = approve, 
+                label = paste("Approve\n", round(approve, digits = 1), "%")),
+            hjust = -0.1, color = "#16877a", size = 3) +
+  geom_text(data = latest, 
+            aes(x = modeldate, y = disapprove, 
+                label = paste("Disapprove\n", round(disapprove, digits = 1), "%")),
+            hjust = -0.1, color = "#d96003", size = 3) +
+  theme_minimal() +
+  theme(
+    axis.title = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.title = element_text(face = 'bold', size = 15),
+    plot.subtitle = element_text(size = 10),
+    plot.caption = element_text(size = 8, hjust = 0),
+    axis.text = element_text(size = 9)
+  ) +
+  scale_x_date(
+    limits = as.Date(c('2025-01-21', '2026-02-28')),
+    breaks = as.Date(c('2025-04-30', '2025-07-31', '2025-10-31', '2026-01-31')),
+    labels = c('Apr\n2025', 'Jul', 'Oct', 'Jan\n2026'),
+    expand = expansion(mult = c(0, 0.1))
+  ) +
+  scale_y_continuous(
+    limits = c(30, 70),
+    breaks = seq(30, 70, 10),
+    labels = c('30.0', '40.0', '50.0', '60.0', '70.0%'),
+    expand = expansion(mult = c(0, 0))
+  ) +
+  geom_hline(yintercept = 50, color = 'black') +
+  labs(
+    title = 'Do Americans approve or disapprove of Donald Trump?',
+    subtitle = "An updating polling average of Donald Trump's approval rating and disapproval rating in his\nsecond term, accounting for each poll's quality, recency, sample size, and partisan lean",
+    caption = "\nNote: 90% of polls are projected to fall within the shaded regions.\nUpdated February 11, 2026 at 3:31 PM"
+  )
+```
+
+## Question #3
+
+```{r}
+fatal <- fatal  |> 
+  mutate(
+    year = year(as.Date(date)),
+    race = case_when(
+      race == "B" ~ "Black",
+      race == "W" ~ "White",
+      race == "H" ~ "Hispanic",
+      TRUE ~ NA_character_
+    )
+  )  |> 
+  filter(!is.na(race), year >= 2015, year <= 2024)
+
+
+# US population by Race (Census 2020 estimates, in millions)
+# Source: U.S. Census Bureau
+pop <- tibble(
+  race = c("Black", "White", "Hispanic"),
+  population_millions = c(46.9, 204.3, 62.1)
+)
+
+
+# Calculate rate per million
+rate_fatal <- fatal  |> 
+  group_by(year, race)  |> 
+  summarize(
+    count = n(), 
+    .groups = "drop"
+  )  |> 
+  left_join(pop, by = "race")  |> 
+  mutate(rate_per_million = count / population_millions)
+
+
+race_colors <- c("Black" = "red", "Hispanic" = "orange", "White" = "blue")
+
+# For annotation for 2020 (George Floyd / BLM protests)
+annotation_2020 <- tibble(
+  x = 2020, y = 7.5
+)
+
+ggplot(rate_fatal, aes(x = year, y = rate_per_million, color = race)) +
+  geom_point(size = 2) +
+  geom_line(linewidth = 1.3) +
+  
+  # George Floyd - line at 2020 and text
+  geom_vline(xintercept = 2020, linetype = "dashed", color = "black", linewidth = 0.5) +
+  annotate("text", x = 2020.15, y = 7.5, label = "George Floyd\n& BLM Protests",
+           hjust = 0, size = 3) +
+  
+  # End-of-line labels
+  geom_text(
+    data = filter(rate_fatal, year == 2024),
+    aes(x = year, y = rate_per_million,
+        label = paste(race, "\n", round(rate_per_million, 0), "/M")),
+    hjust = -.1, size = 3, show.legend = FALSE
+  ) +
+  
+  # Scales
+  scale_x_continuous(
+    limits = c(2015, 2024),
+    breaks = seq(2015, 2024, 1),
+    expand = expansion(mult = c(0, .12))
+  ) +
+  scale_y_continuous(
+    limits = c(0, 10),
+    breaks = seq(0, 10, 2),
+    labels = c('', '2/M', '4/M', '6/M', '8/M', '10 per Million'),
+    expand = expansion(mult = c(0, 0))
+  ) +
+  scale_color_manual(values = race_colors, name = 'Race') +
+  
+# Labels (to get fit in the screen, the code identation was removed)
+  labs(
+    title = "Fatal Police Shootings per Million by Race (2015–2024)",
+    subtitle = "Black Americans are killed at more than twice the rate of white Americans.\nDespite national protests in 2020, the disparity has not narrowed.",
+    caption = "Source: Washington Post Fatal Force Database | Population: U.S. Census Bureau 2020 Rates\ncalculated per million people within each racial group",
+    x = 'Year',
+    y = 'Deaths per Million People'
+    ) +
+  
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 15, face = "bold"),
+    plot.subtitle = element_text(size = 10),
+    plot.caption = element_text(size = 8, hjust = 0),
+    axis.text = element_text(size = 9),
+    axis.title.x = element_text(size = 9),
+    axis.title.y = element_text(size = 9),
+    panel.grid.minor = element_blank()
+  )
+```
+
+Every year, hundreds of people are killed by police in the United States. But not everyone faces the same risk. For a decade, the Washington Post has recorded every fatal police shooting in the country that created one of the most complete databases on this issue, because the federal government still does not track these deaths consistently.
+
+This analysis looks at one question: are Black, white, and Hispanic Americans being killed at the same rate and has that changed over time?
+
+There are two versions of data sets, but for this analysis, I used data set version 2 which track multi-racial or multi-ethnic more accurately. To answer fairly, we cannot just count total deaths. According to U.S. Census population in 2020, White Americans make up the largest share of the population, so comparing raw numbers would be misleading. Instead, I look at deaths per million people within each race group. This allows for comparison using rate.
+
+The results are clear and consistent. Every year from 2015 to 2024, the rate of Black Americans who were killed is more than twice white Americans. Hispanic Americans fell in between. This is consistent in every single year from 2015 to 2024. The gap does not shrink.
+
+In 2020, the murder of George Floyd and the Black Lives Matter (BLM) protests that followed put police violence at the center of public debate like never before. Many cities pledged reforms. New policies were introduced. Yet the data shows no change. The rate of fatal police shootings in the years after 2020 looks almost identical to the years before it.
+
+What this tells us is that the problem is not a series of isolated incidents. It is a pattern that has persisted across ten years, across different cities, and through one of the most significant social movements in modern American history. The numbers have not moved. That, in itself, is the story.
+
+**Source:**
+
+Washington Post. Fatal Force Database. <https://github.com/washingtonpost/data-police-shootings>
+
+U.S. Census Bureau. (2021, August 12). <https://www.census.gov/library/stories/2021/08/improved-race-ethnicity-measures-reveal-united-states-population-much-more-multiracial.html>
+
+**AI Disclaimer:**
+
+I used Google searches to find R code examples and Census data sources, but some R code snippets were automatically generated by Google's AI search features and I used some of those.
+
+-   How to use geom_ribbon
+-   To store colors in variable (e.g, race_colors)
+-   To join tibble, intercept (x,y), annotate
