@@ -1,7 +1,7 @@
 # analyst-portfolio
 R-based data analysis portfolio: fatal police shootings by race (2015–2024) and global forced displacement flows (2000–2025). Visualizations built with ggplot2, compiled with Quarto.
 
-# Analyst Portfolio — Soe Min Thein (Vincent)
+# Analyst Portfolio by Soe Min Thein (Vincent)
 
 This repository contains original data analysis work produced for
 SIS-750 Data Analysis at American University.
@@ -23,7 +23,7 @@ using UNHCR flow data. Finds that displacement follows borders, not burden-shari
 
 ### [Exemplary Code: Reusable Flow Summarizer](./exemplary-code/)
 A general-purpose function for extracting ranked displacement corridors from
-UNHCR flow data — demonstrating functional programming and tidy principles.
+UNHCR flow data - demonstrating functional programming and tidy principles.
 
 ## Skills Demonstrated
 - Data wrangling with `tidyverse` (joins, grouped summaries, `across()`)
