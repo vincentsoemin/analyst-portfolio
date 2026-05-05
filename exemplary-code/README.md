@@ -15,9 +15,9 @@ the intent of each call immediately clear.
 # Helper: get top-N country names for filtering ---------------------------
 
 # Arguments:
-#   data      - UNHCR flow records, pre-filtered by year and population type
+#   data - UNHCR flow records, pre-filtered by year and population type
 #   group_var - column to rank by (country of origin or country of refuge)
-#   n         - number of countries to return (default: 10)
+#   n - number of countries to return (default: 10)
 #
 # Returns: character vector of top-n country names
 
