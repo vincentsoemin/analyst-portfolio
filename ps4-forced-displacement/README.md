@@ -53,7 +53,7 @@ The analysis addresses the research question in three steps:
    to reveal which bilateral flows dominate global displacement — and to test
    whether proximity or policy determines where people go.
 
-The analysis is compiled as a Quarto Reveal.js slide deck, designed for a
+The analysis is compiled as a Quarto Beamer slide deck, designed for a
 presentation audience.
 
 ## Key Findings

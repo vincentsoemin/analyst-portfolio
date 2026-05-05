@@ -1,16 +1,19 @@
 ---
 title: "A World in Motion"
-subtitle: "Global Forced Displacement Flows, 2000–2025"
+subtitle: "Global Forced Displacement Flows, 2000-2025"
 author: "Soe Min Thein (Vincent)"
-date: "May, 2026"
+date: "May 5, 2026"
 format:
-  revealjs:
-    theme: simple
-    slide-number: true
-    embed-resources: true
-    smaller: true
-    scrollable: true
-  
+  beamer:
+    theme: Madrid
+    colortheme: seahorse
+    aspectratio: 169
+    header-includes: |
+      \setbeamertemplate{footline}[frame number]
+      \setbeamerfont{title}{size=\large}
+      \setbeamerfont{subtitle}{size=\normalsize}
+      \hypersetup{colorlinks=true, urlcolor=blue}
+
 knitr:
   opts_chunk:
     echo: false
@@ -28,7 +31,6 @@ library(tidyverse)
 library(readxl)
 library(knitr)
 library(patchwork)
-library(kableExtra)
 ```
 
 ```{r}
@@ -87,7 +89,8 @@ get_top_countries <- function(data, group_var, n = 10) {
 
 **Source:** [UNHCR Forced Displacement Flow Dataset](https://www.unhcr.org/refugee-statistics/insights/explainers/forcibly-displaced-flow-data.html)
 
-**Key information recorded for each flow:**
+**Key information recorded for each flow**
+
 - Country people fled *from*
 - Country people fled *to*  
 - Number of people in that movement
@@ -101,13 +104,13 @@ get_top_countries <- function(data, group_var, n = 10) {
 - Observations – 86,275 rows (after filtering for REF + ASY, 2000–2025)
 - Population types – Refugees (REF) and Asylum-seekers (ASY): the two largest and most consistently reported UNHCR categories
 
-*Pre-2000 data excluded due to sparse and inconsistent country coverage; other population types (IDPs, stateless persons) excluded to maintain comparability across years*
+*Pre-2000 data excluded due to sparse and inconsistent country coverage*
 
 ## A World in Motion
 
 ```{r}
-#| fig-width: 9
-#| fig-height: 4
+#| fig-width: 10
+#| fig-height: 3.5
 #| out-width: "100%"
 
 # Visual 1 ----------------------------------------------------------------
@@ -137,11 +140,11 @@ ggplot(yearly_trends, aes(x = Year, y = Total_Count / 1000000)) +
   scale_x_continuous(
     limits = c(2000, 2025),
     breaks = seq(2000, 2025, by = 5),
-    expand = expansion(mult = c(0, 0.05))
+    expand = expansion(mult = c(0, 0.01))
     ) +
   scale_y_continuous(
     limits = c(0, 9), 
-    breaks = seq(0, 8, by = 2),
+    breaks = seq(2, 8, by = 2),
     expand = expansion(mult = c(0, 0.01))
     ) +
   labs(title = "Global Displacement Has Nearly Tripled Since 2000",
@@ -156,7 +159,7 @@ Displacement is not random, it spikes sharply around identifiable crises and has
 ## Where Are People Fleeing From and Going To?
 
 ```{r}
-#| fig-width: 11
+#| fig-width: 13
 #| fig-height: 4
 #| out-width: "100%"
 
@@ -235,9 +238,7 @@ p2 + p3 + plot_layout(guides = "collect") +
 
 Displaced people overwhelmingly seek refuge in **neighboring countries** – though wealthy nations absorb significant asylum applications.
 
-Syria and Ukraine dominate outflows since 2000. 
-On the receiving end, Türkiye and Uganda reflect geographic proximity, 
-while the US and Germany reflect high-volume asylum processing systems.
+Syria and Ukraine dominate outflows since 2000. On the receiving end, Türkiye and Uganda reflect geographic proximity, while the US and Germany reflect high-volume asylum processing systems.
 
 ## Displacement Follows Borders
 :::: {.columns}
@@ -267,8 +268,7 @@ top_origin_asylum_pairs <- filtered_data |>
 kable(top_origin_asylum_pairs,
       col.names = c("Rank", "Origin Country", "Asylum Country", "Total Displaced"),
       align = c("c", "l", "l", "r"),
-      caption = "Top 10 Origin–Asylum Corridors, Cumulative 2000–2025") |> 
-  kable_styling(font_size = 20, full_width = TRUE)
+      caption = "Top 10 Origin–Asylum Corridors, Cumulative 2000–2025")
 ```
 :::
 
@@ -279,11 +279,14 @@ kable(top_origin_asylum_pairs,
 
 **What did we find?**
 
-- Global forced displacement flows have grown sharply since 2000, with major spikes around the **Syria crisis (2013–2016)**, the **Rohingya exodus from Myanmar (2017)**, and the **Ukraine war (2022)**
+- Global forced displacement flows have grown sharply since 2000, with major spikes around the **Syria crisis (2013–2016)**, the **Rohingya crisis in Myanmar (2017)**, and the **Ukraine war (2022)**
 - The Myanmar crisis – which drove over 700,000 Rohingya into Bangladesh in a single year – illustrates how quickly a bilateral corridor can dominate global flows
 - Syria and Ukraine generate the largest cumulative outflows, together accounting for nearly half of all displacement since 2000
 - The countries absorbing the most displaced people are **neighboring low- and middle-income countries**; the US and Germany are exceptions driven by high asylum application volumes
 - Top displacement corridors are defined by **geography and proximity**, not international burden-sharing
+
+
+## Key Implications
 
 **What does it mean?**
 
