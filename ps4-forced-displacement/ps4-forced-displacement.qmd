@@ -140,7 +140,7 @@ ggplot(yearly_trends, aes(x = Year, y = Total_Count / 1000000)) +
   scale_x_continuous(
     limits = c(2000, 2025),
     breaks = seq(2000, 2025, by = 5),
-    expand = expansion(mult = c(0, 0.01))
+    expand = expansion(mult = c(0, 0.05))
     ) +
   scale_y_continuous(
     limits = c(0, 9), 
