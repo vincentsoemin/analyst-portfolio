@@ -279,7 +279,7 @@ kable(top_origin_asylum_pairs,
 
 **What did we find?**
 
-- Global forced displacement flows have grown sharply since 2000, with major spikes around the **Syria crisis (2013–2016)**, the **Rohingya crisis in Myanmar (2017)**, and the **Ukraine war (2022)**
+- Global forced displacement flows have grown sharply since 2000, with major spikes around the **Syria crisis (2013–2016)**, the **forced displacement of Rohingya from Myanmar (2017)**, and the **Ukraine war (2022)**
 - The Myanmar crisis – which drove over 700,000 Rohingya into Bangladesh in a single year – illustrates how quickly a bilateral corridor can dominate global flows
 - Syria and Ukraine generate the largest cumulative outflows, together accounting for nearly half of all displacement since 2000
 - The countries absorbing the most displaced people are **neighboring low- and middle-income countries**; the US and Germany are exceptions driven by high asylum application volumes

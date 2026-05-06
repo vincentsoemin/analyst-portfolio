@@ -39,9 +39,9 @@ formally recognized as refugees or registered as asylum-seekers.
 The analysis addresses the research question in three steps:
 
 1. **Trend over time** — Annual totals are aggregated and plotted from 2000
-   to 2025, with annotations marking the Syria conflict (2013), the Rohingya
-   exodus from Myanmar (2017), and the Ukraine war (2022) to connect spikes
-   to identifiable causes.
+   to 2025, with annotations marking the Syria conflict (2013), the forced 
+   displacement of Rohingya populations from Myanmar (2017), and the 
+   Ukraine war (2022) to connect spikes to identifiable causes.
 
 2. **Top origin and receiving countries** — Cumulative totals are summed by
    country across the full period to identify which countries generate the most
